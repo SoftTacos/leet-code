@@ -38,6 +38,11 @@ func Test_firstMissingPositive(t *testing.T) {
 			nums:        []int{1, 2, 3, 11, 12},
 			wantMissing: 4,
 		},
+		{
+			name:        "len",
+			nums:        []int{3, 4, -1, 1},
+			wantMissing: 2,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -47,3 +52,11 @@ func Test_firstMissingPositive(t *testing.T) {
 		})
 	}
 }
+
+/*
+
+[0,-1,-5,2,1,-5,11]
+[-8,-8,8,2,1,8,11]
+
+
+*/
