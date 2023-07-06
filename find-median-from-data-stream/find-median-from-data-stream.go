@@ -1,114 +1,102 @@
 package findmedianfromdatastream
 
-/**
- * Your MedianFinder object will be instantiated and called as such:
- * obj := Constructor();
- * obj.AddNum(num);
- * param_2 := obj.FindMedian();
- */
+import (
+	"container/heap"
+)
 
-/*
-Notes:
-- could just toss everything into a slice(golang equivalent of a vector), and then sort it when FindMedian is called
-  that would take O(nlog(n)) time, but would use O()
-*/
+// import "github.com/fufuok/utils/generic/heap"
 
-// type MedianFinder struct {
-// 	values []int
-// }
+// https://leetcode.com/problems/find-median-from-data-stream/
 
-// func Constructor() MedianFinder {
-// 	return MedianFinder{}
-// }
+type MinHeap []int
 
-// func (mf *MedianFinder) AddNum(num int) {
-// 	mf.values = append(mf.values, num)
-// }
+func (h MinHeap) Len() int           { return len(h) }
+func (h MinHeap) Less(i, j int) bool { return h[i] < h[j] }
+func (h MinHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
 
-// func (mf *MedianFinder) FindMedian() (median float64) {
-// 	sort.Slice(mf.values, func(i, j int) bool {
-// 		return mf.values[i] < mf.values[j]
-// 	})
-// 	if len(mf.values)%2 == 0 {
-// 		median = (float64(mf.values[(len(mf.values)-1)/2]) + float64(mf.values[(len(mf.values))/2])) / 2
-// 	} else {
-// 		median = float64(mf.values[len(mf.values)/2])
-// 	}
-// 	return
-// }
-
-// unbalanced BST
-// takes longer to lookup the median if it isn't balanced
-// however there seem to be more insertions than lookups
-type Node struct {
-	Val int
-	// Count   int
-	Less    *Node
-	Greater *Node
+func (h *MinHeap) Push(x any) {
+	*h = append(*h, x.(int))
 }
 
-func (n *Node) AddNum(num int) (newNode *Node) {
-	// if n is nil, then we need to
-	if n == nil {
-		n = &Node{
-			Val: num,
-		}
-	} else if num < n.Val {
-		n.Less = n.Less.AddNum(num)
-	} else {
-		n.Greater = n.Greater.AddNum(num)
-	}
-	return n
+func (h *MinHeap) Pop() any {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
 }
 
-// in order traversal, aka left node, current node, right node
-func (n *Node) FindMedian(totalNodes int, count *int, median *float64) {
-
-	// traverse left
-	if n.Less != nil {
-		n.Less.FindMedian(totalNodes, count, median)
-	}
-
-	// traverse self
-	(*count)++
-	// if this is a median node, then increment the median
-	// even median node case
-	if totalNodes%2 == 0 && ((totalNodes)/2 == *count || (totalNodes/2)+1 == *count) {
-		*median = *median + (float64(n.Val) / 2)
-
-		// odd median node case
-	} else if (totalNodes+1)/2 == *count {
-		*median = float64(n.Val)
-	}
-
-	// traverse right
-	if n.Greater != nil {
-		n.Greater.FindMedian(totalNodes, count, median)
-	}
+func (h MinHeap) Peek() (v int) {
+	// v = h.Pop().(int)
+	// h.Push(v)
+	return h[0]
 }
+
+// embed minheap to reuse code, override Less function to make it a MaxHeap
+type MaxHeap struct {
+	MinHeap
+}
+
+func (h MaxHeap) Less(i, j int) bool { return h.MinHeap[i] > h.MinHeap[j] }
 
 type MedianFinder struct {
-	root       *Node
-	totalNodes int
+	less    *MaxHeap
+	greater *MinHeap
 }
 
 func Constructor() MedianFinder {
-	return MedianFinder{}
+	maxHeap := MaxHeap{}
+	heap.Init(&maxHeap)
+	minHeap := MinHeap{}
+	heap.Init(&minHeap)
+
+	return MedianFinder{
+		less:    &maxHeap,
+		greater: &minHeap,
+	}
 }
 
 func (mf *MedianFinder) AddNum(num int) {
-	if mf.totalNodes == 0 {
-		mf.root = &Node{
-			Val: num,
+	if mf.less.Len() == 0 {
+		heap.Push(mf.less, num)
+		return
+	}
+
+	// if the two heaps are not equal in size:
+	if mf.greater.Len() != mf.less.Len() {
+		var popped int
+		if mf.greater.Len() > mf.less.Len() {
+			popped = heap.Pop(mf.greater).(int)
+		} else if mf.greater.Len() < mf.less.Len() {
+			popped = heap.Pop(mf.less).(int)
+		}
+		if num < popped {
+			heap.Push(mf.less, num)
+			heap.Push(mf.greater, popped)
+		} else {
+			heap.Push(mf.greater, num)
+			heap.Push(mf.less, popped)
 		}
 	} else {
-		mf.root.AddNum(num)
+		if mf.less.Peek() > num {
+			heap.Push(mf.less, num)
+		} else {
+			heap.Push(mf.greater, num)
+		}
 	}
-	mf.totalNodes++
 }
 
 func (mf *MedianFinder) FindMedian() (median float64) {
-	var count int
-	mf.root.FindMedian(mf.totalNodes, &count, &median)
+	len := mf.greater.Len() + mf.less.Len()
+	if len%2 == 0 {
+		median = float64(mf.greater.Peek()+mf.less.Peek()) / 2
+	} else {
+		if mf.greater.Len() > mf.less.Len() {
+			median = float64(mf.greater.Peek())
+		} else {
+			median = float64(mf.less.Peek())
+		}
+	}
+
 	return
 }

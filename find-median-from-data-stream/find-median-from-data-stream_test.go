@@ -28,15 +28,20 @@ func TestMedianFinder_FindMedian(t *testing.T) {
 			operations: []string{"1", "2", "3", "get"},
 			want:       []float64{2},
 		},
-		// {
-		// 	name:       "duplicates odd",
-		// 	operations: []string{"1", "2", "2", "get"},
-		// 	want:       []float64{2},
-		// },
 		{
 			name:       "duplicates odd",
 			operations: []string{"1", "1", "1", "10", "-1", "2", "123", "get"},
 			want:       []float64{1},
+		},
+		{
+			name:       "negatives",
+			operations: []string{"-1", "-2", "-3", "-4", "-5", "get"},
+			want:       []float64{-3},
+		},
+		{
+			name:       "positives",
+			operations: []string{"5", "4", "3", "2", "1", "get"},
+			want:       []float64{3},
 		},
 		{
 			name:       "duplicates even",
@@ -47,6 +52,11 @@ func TestMedianFinder_FindMedian(t *testing.T) {
 			name:       "four",
 			operations: []string{"1", "2", "3", "4", "get"},
 			want:       []float64{2.5},
+		},
+		{
+			name:       "idk",
+			operations: []string{"12", "10", "13", "11", "5", "get"},
+			want:       []float64{11},
 		},
 	}
 	for _, tt := range tests {
