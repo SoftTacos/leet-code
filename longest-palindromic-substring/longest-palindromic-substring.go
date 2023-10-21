@@ -1,25 +1,21 @@
 package longest
 
 func longestPalindrome(s string) (pal string) {
-	// subs := make([]string, len(s)*len(s))
-	// subs := make(map[string]struct{}, len(s)*len(s))
-	var sub string
+	subs := make([]string, 0, len(s)*len(s))
+	// fmt.Println(s)
 	for i := range s {
-		for size := 1; size < len(s)-i+1; size++ {
-			sub = s[i : i+size]
-			// if sub is smaller than current largest palindrome, skip
-			if len(sub) <= len(pal) {
-				continue
-			}
-
-			// if we already tried that substring, skip
-			if isPalindrome(sub) {
-				// subs[s[i:i+size]] = struct{}{}
-				if len(pal) < len(sub) {
-					pal = sub
-				}
-			}
+		for size := 1; i+size < len(s)+1; size++ {
+			subs = append(subs, s[i:i+size])
 		}
+	}
+
+	for s := range subs {
+		if len(subs[s]) <= len(pal) {
+			continue
+		} else if isPalindrome(subs[s]) {
+			pal = subs[s]
+		}
+
 	}
 
 	return
@@ -36,5 +32,6 @@ func isPalindrome(subStr string) bool {
 			return false
 		}
 	}
+
 	return true
 }
