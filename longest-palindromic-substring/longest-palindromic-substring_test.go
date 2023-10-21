@@ -5,13 +5,7 @@ import (
 )
 
 func Test_longestPalindrome(t *testing.T) {
-	total := 1000
-	charset := "12345asa54321"
-	reallyLong := make([]byte, 500)
-	reallyLong = append(reallyLong, []byte(charset)...)
-	reallyLong = append(reallyLong, make([]byte, total-len(reallyLong))...)
-	//12345asa54321
-	//12345asa54321
+
 	tests := []struct {
 		name string
 		s    string
@@ -38,8 +32,8 @@ func Test_longestPalindrome(t *testing.T) {
 			want: "dood",
 		},
 		{
-			name: "long",
-			s:    string(reallyLong),
+			name: "12345",
+			s:    "543212345asa543212345",
 			want: "12345asa54321",
 		},
 	}
