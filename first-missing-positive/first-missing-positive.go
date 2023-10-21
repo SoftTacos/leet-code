@@ -12,7 +12,7 @@ func firstMissingPositive(nums []int) int {
 	// if there is not a missing value, then return l+1
 
 	// first toss out values that can't possibly be useful, because they are outside the possible values for a missing value
-	// example: [1,-2,1,22,3] -> [1,5,1,5,3]
+	// example: [1,-2,1,22,3] -> [1,6,1,6,3]
 	// for non-go people,i is the index in the list, and n is a copy of the value at nums[i]
 	for i, n := range nums {
 		if n <= 0 || n > l {
@@ -24,7 +24,7 @@ func firstMissingPositive(nums []int) int {
 	// i can safely ignore values equal to l+1. Now I need to indicate if a value exists or not
 	// i can use that values index to mark its existence by making the value at the index negative
 	// for non-go people,i is the index in the list, and n is a copy of the value at nums[i]
-	// example continued: [1,5,1,5,3] -> [-1,5,-1,5,-3]
+	// example continued: [1,6,1,5,3] -> [-1,6,-1,6,-3]
 	for _, n := range nums {
 		n = int(math.Abs(float64(n)))
 		// skip values that are outside of l+1, we don't want to mess with that index
