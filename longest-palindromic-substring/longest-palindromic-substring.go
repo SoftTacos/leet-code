@@ -1,37 +1,38 @@
 package longest
 
 func longestPalindrome(s string) (pal string) {
-	subs := make([]string, 0, len(s)*len(s))
-	// fmt.Println(s)
-	for i := range s {
-		for size := 1; i+size < len(s)+1; size++ {
-			subs = append(subs, s[i:i+size])
+	var current string
+	for offset := range s {
+		current = longestFromOffset(s, offset)
+		if len(current) > len(pal) {
+			pal = current
 		}
 	}
-
-	for s := range subs {
-		if len(subs[s]) <= len(pal) {
-			continue
-		} else if isPalindrome(subs[s]) {
-			pal = subs[s]
-		}
-
-	}
-
 	return
 }
 
-func isPalindrome(subStr string) bool {
-	if len(subStr) == 1 {
-		return true
+func longestFromOffset(s string, offset int) (longest string) {
+	if offset >= len(s)-1 {
+		return s[offset : offset+1]
 	}
 
-	middle := len(subStr) / 2
-	for i := 0; i < middle; i++ {
-		if subStr[i] != subStr[len(subStr)-i-1] {
-			return false
+	longest = s[offset : offset+1]
+	if s[offset] == s[offset+1] {
+		longest = s[offset : offset+2]
+	}
+	var mod int
+	for radius := 1; offset+radius < len(s) && offset-radius >= 0; radius++ {
+		if len(longest)%2 == 0 {
+			mod = 1
+		} else {
+			mod = 0
+		}
+		if offset+radius+mod < len(s) && s[offset-radius] == s[offset+radius+mod] {
+			longest = s[offset-radius : offset+radius+mod+1]
+		} else {
+			return
 		}
 	}
 
-	return true
+	return
 }

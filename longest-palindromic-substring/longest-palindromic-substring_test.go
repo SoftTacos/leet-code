@@ -21,21 +21,31 @@ func Test_longestPalindrome(t *testing.T) {
 			s:    "doo",
 			want: "oo",
 		},
-		// {
-		// 	name: "dad",
-		// 	s:    "dad",
-		// 	want: "dad",
-		// },
-		// {
-		// 	name: "doodle",
-		// 	s:    "asdfasdfdoodle",
-		// 	want: "dood",
-		// },
-		// {
-		// 	name: "12345",
-		// 	s:    "543212345asa543212345",
-		// 	want: "12345asa54321",
-		// },
+		{
+			name: "ood",
+			s:    "ood",
+			want: "oo",
+		},
+		{
+			name: "dad",
+			s:    "dad",
+			want: "dad",
+		},
+		{
+			name: "doodle",
+			s:    "asdfasdfdoodle",
+			want: "dood",
+		},
+		{
+			name: "asdfasdf",
+			s:    "asdfasdf",
+			want: "a",
+		},
+		{
+			name: "12345",
+			s:    "543212345asa543212345",
+			want: "543212345asa543212345",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
