@@ -12,6 +12,43 @@ func longestPalindrome(s string) (pal string) {
 }
 
 func longestFromOffset(s string, offset int) (longest string) {
+	if offset == 0 || offset > len(s)-1 {
+		return s[offset : offset+1]
+	}
+	left := s[:offset] // if s == asdf then left == as
+
+	// odd
+	longest = calcLongest(left, s[offset:], "")
+
+	// even
+	if offset+1 == len(s) {
+		return
+	}
+	evenLongest := calcLongest(left, s[offset+1:], s[offset:offset+1])
+	if len(evenLongest) > len(longest) {
+		longest = evenLongest
+	}
+
+	return
+}
+
+func calcLongest(left, right, mid string) string {
+	var r int
+	var l = len(left)
+	for i := 0; i < len(left) && i < len(right); i++ {
+		if left[len(left)-i-1] == right[i] {
+			l = len(left) - i - 1
+			r = i + 1
+		} else {
+			break
+		}
+	}
+	return left[l:] + mid + right[:r]
+}
+
+/*
+
+func longestFromOffset(s string, offset int) (longest string) {
 	if offset >= len(s)-1 {
 		return s[offset : offset+1]
 	}
@@ -36,3 +73,5 @@ func longestFromOffset(s string, offset int) (longest string) {
 
 	return
 }
+
+*/
